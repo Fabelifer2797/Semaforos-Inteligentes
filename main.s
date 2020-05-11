@@ -40,8 +40,9 @@ SPVR		EQU		0x20000009
 		
 __main
 
-INF		BL		CI    ; Branch de la subrutina CI = Condiciones iniciales
-		B 		INF  ; Branch que genera un loop infinito
+		BL		CI    ; Branch de la subrutina CI = Condiciones iniciales
+INF		BL		CRO   ; Branch de la subrutina CRO = Cambio del Reloj Out
+		B 		INF   ; Branch que genera un loop infinito
 
 ;Subrutina que se encarga de establecer los valores iniciales antes del ciclo principal
 
@@ -77,6 +78,22 @@ CI		MOV 	H,#FALSE
 		STR		R6,[R8]
 		BX 		LR	    ;Se sale de la subrutina y regresa al flujo principal
 		
+;Subrutina que se encarga de cambiar el valor de la variable reloj out de acuerdo a la ecuación diseñada
+
+CRO		ADD		CONT1,CONT1,#1
+		CMP     CONT1,#3 ; Debería compararse con 64000 de acuerdo al pseudo código, pero de momento dejarlo en 3 por las pruebas
+		ITE    	EQ		; Se verifica la condición del IF
+		MOVEQ   RELOJOUT,#1 ; Se ejecuta el THEN
+		;Comienzo del ELSE
+		EORNE	R6,V,#1 ; NOT del LSB de V mediante un XOR
+		ANDNE	R7,R6,FLUJOHORIZONTAL
+		ANDNE	R8,H,R6
+		ANDNE	R9,H,FLUJOHORIZONTAL
+		ORRNE	R10,R7,R8
+		ORRNE	R11,R10,R9
+		EORNE	RELOJOUT,FLUJOHORIZONTAL,R11
+		;Fin del ELSE
+		BX		LR
+
 		
 		END
-			

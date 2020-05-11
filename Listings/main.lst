@@ -80,60 +80,92 @@ ARM Macro Assembler    Page 2
    40 00000000         
    41 00000000         __main
    42 00000000         
-   43 00000000 F000 F801 
-                       INF     BL               CI          ; Branch de la subr
+   43 00000000 F000 F803       BL               CI          ; Branch de la subr
                                                             utina CI = Condicio
                                                             nes iniciales
-   44 00000004 E7FC            B                INF         ; Branch que genner
-                                                            a un loop infinito
-   45 00000006         
-   46 00000006         ;Subrutina que se encarga de establecer los valores inic
+   44 00000004 F000 F83A 
+                       INF     BL               CRO         ; Branch de la subr
+                                                            utina CRO = Cambio 
+                                                            del Reloj Out
+   45 00000008 E7FC            B                INF         ; Branch que genera
+                                                             un loop infinito
+   46 0000000A         
+   47 0000000A         ;Subrutina que se encarga de establecer los valores inic
                        iales antes del ciclo principal
-   47 00000006         
-   48 00000006 F04F 0000 
+   48 0000000A         
+   49 0000000A F04F 0000 
                        CI      MOV              H,#FALSE
-   49 0000000A F04F 0100       MOV              V,#FALSE
-   50 0000000E F04F 0200       MOV              CONT1,#FALSE
-   51 00000012 F04F 0300       MOV              RELOJOUT,#FALSE
-   52 00000016 F04F 0400       MOV              AMARILLO,#FALSE
-   53 0000001A F04F 0500       MOV              FLUJOHORIZONTAL,#FALSE
-   54 0000001E         
-   55 0000001E         ;Se establecen los valores iniciales de los outputs en m
+   50 0000000E F04F 0100       MOV              V,#FALSE
+   51 00000012 F04F 0200       MOV              CONT1,#FALSE
+   52 00000016 F04F 0300       MOV              RELOJOUT,#FALSE
+   53 0000001A F04F 0400       MOV              AMARILLO,#FALSE
+   54 0000001E F04F 0500       MOV              FLUJOHORIZONTAL,#FALSE
+   55 00000022         
+   56 00000022         ;Se establecen los valores iniciales de los outputs en m
                        emoria  
-   56 0000001E F04F 0601       MOV              R6,#TRUE
-   57 00000022 F04F 0700       MOV              R7,#FALSE
-   58 00000026 F04F 5800       LDR              R8,=SHV
-   59 0000002A F8C8 7000       STR              R7,[R8]
-   60 0000002E F8DF 8048       LDR              R8,=SHA
-   61 00000032 F8C8 7000       STR              R7,[R8]
-   62 00000036 F8DF 8044       LDR              R8,=SHR
-   63 0000003A F8C8 6000       STR              R6,[R8]
-   64 0000003E F8DF 8040       LDR              R8,=SPHV
-   65 00000042 F8C8 6000       STR              R6,[R8]
-   66 00000046 F8DF 803C       LDR              R8,=SPHR
-   67 0000004A F8C8 7000       STR              R7,[R8]
-   68 0000004E F8DF 8038       LDR              R8,=SVV
-   69 00000052 F8C8 6000       STR              R6,[R8]
-   70 00000056 F8DF 8034       LDR              R8,=SVA
-   71 0000005A F8C8 7000       STR              R7,[R8]
-   72 0000005E F8DF 8030       LDR              R8,=SVR
-   73 00000062 F8C8 7000       STR              R7,[R8]
-   74 00000066 F8DF 802C       LDR              R8,=SPVV
-   75 0000006A F8C8 7000       STR              R7,[R8]
-   76 0000006E F8DF 8028       LDR              R8,=SPVR
-   77 00000072 F8C8 6000       STR              R6,[R8]
-   78 00000076 4770            BX               LR          ;Se sale de la subr
+   57 00000022 F04F 0601       MOV              R6,#TRUE
+   58 00000026 F04F 0700       MOV              R7,#FALSE
+   59 0000002A F04F 5800       LDR              R8,=SHV
+   60 0000002E F8C8 7000       STR              R7,[R8]
+   61 00000032 F8DF 8074       LDR              R8,=SHA
+   62 00000036 F8C8 7000       STR              R7,[R8]
+   63 0000003A F8DF 8070       LDR              R8,=SHR
+   64 0000003E F8C8 6000       STR              R6,[R8]
+   65 00000042 F8DF 806C       LDR              R8,=SPHV
+   66 00000046 F8C8 6000       STR              R6,[R8]
+   67 0000004A F8DF 8068       LDR              R8,=SPHR
+   68 0000004E F8C8 7000       STR              R7,[R8]
+   69 00000052 F8DF 8064       LDR              R8,=SVV
+   70 00000056 F8C8 6000       STR              R6,[R8]
+   71 0000005A F8DF 8060       LDR              R8,=SVA
+   72 0000005E F8C8 7000       STR              R7,[R8]
+   73 00000062 F8DF 805C       LDR              R8,=SVR
+   74 00000066 F8C8 7000       STR              R7,[R8]
+   75 0000006A F8DF 8058       LDR              R8,=SPVV
+   76 0000006E F8C8 7000       STR              R7,[R8]
+   77 00000072 F8DF 8054       LDR              R8,=SPVR
+   78 00000076 F8C8 6000       STR              R6,[R8]
+   79 0000007A 4770            BX               LR          ;Se sale de la subr
                                                             utina y regresa al 
                                                             flujo principal
-   79 00000078         
-   80 00000078         
-   81 00000078                 END
 
 
 
 ARM Macro Assembler    Page 3 
 
 
+   80 0000007C         
+   81 0000007C         ;Subrutina que se encarga de cambiar el valor de la vari
+                       able reloj out de acuerdo a la ecuación diseñada
+   82 0000007C         
+   83 0000007C F102 0201 
+                       CRO     ADD              CONT1,CONT1,#1
+   84 00000080 2A03            CMP              CONT1,#3    ; Debería comparars
+                                                            e con 64000 de acue
+                                                            rdo al pseudo códig
+                                                            o, pero de momento 
+                                                            dejarlo en 3 por la
+                                                            s pruebas
+   85 00000082 BF0C            ITE              EQ          ; Se verifica la co
+                                                            ndición del IF
+   86 00000084 2301            MOVEQ            RELOJOUT,#1 ; Se ejecuta el THE
+                                                            N
+   87 00000086         ;Comienzo del ELSE
+   88 00000086 F081 0601       EORNE            R6,V,#1     ; NOT del LSB de V 
+                                                            mediante un XOR
+   89 0000008A BF1F EA06 
+              0705             ANDNE            R7,R6,FLUJOHORIZONTAL
+   90 00000090 EA00 0806       ANDNE            R8,H,R6
+   91 00000094 EA00 0905       ANDNE            R9,H,FLUJOHORIZONTAL
+   92 00000098 EA47 0A08       ORRNE            R10,R7,R8
+   93 0000009C BF1C EA4A 
+              0B09             ORRNE            R11,R10,R9
+   94 000000A2 EA85 030B       EORNE            RELOJOUT,FLUJOHORIZONTAL,R11
+   95 000000A6         ;Fin del ELSE
+   96 000000A6 4770            BX               LR
+   97 000000A8         
+   98 000000A8         
+   99 000000A8                 END
               20000001 
               20000002 
               20000003 
@@ -156,21 +188,29 @@ ngs\main.lst main.s
 ARM Macro Assembler    Page 1 Alphabetic symbol ordering
 Relocatable symbols
 
-CI 00000006
+CI 0000000A
 
 Symbol: CI
    Definitions
-      At line 48 in file main.s
+      At line 49 in file main.s
    Uses
       At line 43 in file main.s
 Comment: CI used once
-INF 00000000
+CRO 0000007C
+
+Symbol: CRO
+   Definitions
+      At line 83 in file main.s
+   Uses
+      At line 44 in file main.s
+Comment: CRO used once
+INF 00000004
 
 Symbol: INF
    Definitions
-      At line 43 in file main.s
-   Uses
       At line 44 in file main.s
+   Uses
+      At line 45 in file main.s
 Comment: INF used once
 Main 00000000
 
@@ -188,7 +228,7 @@ Symbol: __main
    Uses
       At line 39 in file main.s
 Comment: __main used once
-4 symbols
+5 symbols
 
 
 
@@ -201,13 +241,13 @@ Symbol: FALSE
    Definitions
       At line 16 in file main.s
    Uses
-      At line 48 in file main.s
       At line 49 in file main.s
       At line 50 in file main.s
       At line 51 in file main.s
       At line 52 in file main.s
       At line 53 in file main.s
-      At line 57 in file main.s
+      At line 54 in file main.s
+      At line 58 in file main.s
 
 SHA 20000001
 
@@ -215,7 +255,7 @@ Symbol: SHA
    Definitions
       At line 23 in file main.s
    Uses
-      At line 60 in file main.s
+      At line 61 in file main.s
 Comment: SHA used once
 SHR 20000002
 
@@ -223,7 +263,7 @@ Symbol: SHR
    Definitions
       At line 24 in file main.s
    Uses
-      At line 62 in file main.s
+      At line 63 in file main.s
 Comment: SHR used once
 SHV 20000000
 
@@ -231,7 +271,7 @@ Symbol: SHV
    Definitions
       At line 22 in file main.s
    Uses
-      At line 58 in file main.s
+      At line 59 in file main.s
 Comment: SHV used once
 SPHR 20000004
 
@@ -239,7 +279,7 @@ Symbol: SPHR
    Definitions
       At line 26 in file main.s
    Uses
-      At line 66 in file main.s
+      At line 67 in file main.s
 Comment: SPHR used once
 SPHV 20000003
 
@@ -247,7 +287,7 @@ Symbol: SPHV
    Definitions
       At line 25 in file main.s
    Uses
-      At line 64 in file main.s
+      At line 65 in file main.s
 Comment: SPHV used once
 SPVR 20000009
 
@@ -261,7 +301,7 @@ ARM Macro Assembler    Page 2 Alphabetic symbol ordering
 Absolute symbols
 
    Uses
-      At line 76 in file main.s
+      At line 77 in file main.s
 Comment: SPVR used once
 SPVV 20000008
 
@@ -269,7 +309,7 @@ Symbol: SPVV
    Definitions
       At line 30 in file main.s
    Uses
-      At line 74 in file main.s
+      At line 75 in file main.s
 Comment: SPVV used once
 SVA 20000006
 
@@ -277,7 +317,7 @@ Symbol: SVA
    Definitions
       At line 28 in file main.s
    Uses
-      At line 70 in file main.s
+      At line 71 in file main.s
 Comment: SVA used once
 SVR 20000007
 
@@ -285,7 +325,7 @@ Symbol: SVR
    Definitions
       At line 29 in file main.s
    Uses
-      At line 72 in file main.s
+      At line 73 in file main.s
 Comment: SVR used once
 SVV 20000005
 
@@ -293,7 +333,7 @@ Symbol: SVV
    Definitions
       At line 27 in file main.s
    Uses
-      At line 68 in file main.s
+      At line 69 in file main.s
 Comment: SVV used once
 TRUE 00000001
 
@@ -301,7 +341,7 @@ Symbol: TRUE
    Definitions
       At line 15 in file main.s
    Uses
-      At line 56 in file main.s
+      At line 57 in file main.s
 Comment: TRUE used once
 12 symbols
-359 symbols in table
+360 symbols in table
