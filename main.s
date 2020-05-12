@@ -16,6 +16,7 @@ TRUE		EQU		1
 FALSE		EQU		0
 	
 ;Se asignan etiquetas para los espacios de memoria RAM donde se almacenaran los ouputs
+;La memoria RAM comienza en la dirección 0x20000000
 ;Notaciones: S = Semaforo, P = Peatonal, H = Horizontal, V (al inicio) = Vertical, A = Amarillo, R = Rojo, V (al final) = Verde
 ;Cada dirección de memoria apunta a un bloque de 4 bytes de tamaño
 
@@ -77,24 +78,24 @@ CI		MOV 	H,#FALSE
 		STR		R7,[R8]
 		LDR		R8,=SPVR
 		STR		R6,[R8]
-		BX 		LR	    ;Se sale de la subrutina y regresa al flujo principal
+		BX 		LR	;Se sale de la subrutina y regresa al flujo principal
 		
 ;Subrutina que se encarga de cambiar el valor de la variable reloj out de acuerdo a la ecuación diseñada
 
 CRO		ADD		CONT1,CONT1,#1
 		CMP     CONT1,#3 ; Debería compararse con 64000 de acuerdo al pseudo código, pero de momento dejarlo en 3 por las pruebas
 		ITE    	EQ		; Se verifica la condición del IF
-		MOVEQ   RELOJOUT,#1 ; Se ejecuta el THEN
+		MOVEQ   RELOJOUT,#1 ; Se ejecuta el THEN (Es decir cuando se cumple la condición del IF)
 		;Comienzo del ELSE
 		EORNE	R6,V,#1 ; NOT del LSB de V mediante un XOR
 		ANDNE	R7,R6,FLUJOHORIZONTAL
 		ANDNE	R8,H,R6
 		ANDNE	R9,H,FLUJOHORIZONTAL
 		ORRNE	R10,R7,R8
-		ORRNE	R11,R10,R9
-		EORNE	RELOJOUT,FLUJOHORIZONTAL,R11
+		ORRNE	R11,R10,R9 ;En R11 se almacena el resultado de la ecuación
+		EORNE	RELOJOUT,FLUJOHORIZONTAL,R11  ; Se aplica un XOR entre FLUJOHORIZONTAL Y R11, y se almacena en RELOJOUT
 		;Fin del ELSE
-		BX		LR
+		BX		LR 
 		
 ;Subrutina que se encarga de verificar la condición de reloj out
 
@@ -104,8 +105,9 @@ IRO		CMP		RELOJOUT,#1
 		BX		LR   ; Si la condición no se cumple se regresa al ciclo infinito
 		
 ;Subrutina que se encarga de cambiar los valores de algunos outputs dependiendo del valor de Flujo Horizontal
+;Para esta subrutina R6 representa a la variable interna cont2
 
-CDO     MOV		R6,#0 ; Para esta subrutina R6 representa a la variable interna cont2
+CDO     MOV		R6,#5 ; Aquí se debería almacenar 12000 pero dejarlo así de momento para las pruebas
 		MOV		AMARILLO,#1
 		MOV		RELOJOUT,#0
 		MOV		R7,#TRUE
@@ -123,9 +125,65 @@ CDO     MOV		R6,#0 ; Para esta subrutina R6 representa a la variable interna con
 		BL		L2      ;Branch L2 = Loop 2
 		
 ;Subrutina que ejecuta el segundo ciclo
+ 
+L2		CBZ		R6,L20 ; Branch L20 = Loop 2 Out, básicamente lo saca del loop cuando cont2 sea cero
+		SUB     R6,R6,#1
+		B		L2
+		
+		
+;Subrutina después del segundo ciclo, que verifica el nuevo valor de Flujo Horizontal
 
-L2		BL		INF
+L20		MOV		CONT1,#0
+		MOV		AMARILLO,#0
+		EOR		FLUJOHORIZONTAL,FLUJOHORIZONTAL,#1 ;Se hace el NOT mediante un XOR entre 1 y el LSB de FLUJOHORIZONTAL
+		CBZ		FLUJOHORIZONTAL,CFO ;Branch CFO = Cambio final de Outputs
+		;Comienzo del IF
+		LDR		R9,=SHV
+		STR		R7,[R9]
+		LDR		R9,=SHA
+		STR		R8,[R9]
+		LDR		R9,=SHR
+		STR		R8,[R9]
+		LDR		R9,=SPHV
+		STR		R8,[R9]
+		LDR		R9,=SPHR
+		STR		R7,[R9]
+		LDR		R9,=SVV
+		STR		R8,[R9]
+		LDR		R9,=SVA
+		STR		R8,[R9]
+		LDR		R9,=SVR
+		STR		R7,[R9]
+		LDR		R9,=SPVV
+		STR		R7,[R9]
+		LDR		R9,=SPVR
+		STR		R8,[R9]
+		BL		INF
+	
+		
+;Subrutina que cambia los outputs cuando Flujo Horizontal == 0, Entra al ELSE
 
-
+		;Comienzo del Else
+CFO		LDR		R9,=SHV
+		STR		R8,[R9]
+		LDR		R9,=SHA
+		STR		R8,[R9]
+		LDR		R9,=SHR
+		STR		R7,[R9]
+		LDR		R9,=SPHV
+		STR		R7,[R9]
+		LDR		R9,=SPHR
+		STR		R8,[R9]
+		LDR		R9,=SVV
+		STR		R7,[R9]
+		LDR		R9,=SVA
+		STR		R8,[R9]
+		LDR		R9,=SVR
+		STR		R8,[R9]
+		LDR		R9,=SPVV
+		STR		R8,[R9]
+		LDR		R9,=SPVR
+		STR		R7,[R9]
+		BL		INF
 		
 		END
