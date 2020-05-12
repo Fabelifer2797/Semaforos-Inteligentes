@@ -17,18 +17,18 @@ FALSE		EQU		0
 	
 ;Se asignan etiquetas para los espacios de memoria RAM donde se almacenaran los ouputs
 ;Notaciones: S = Semaforo, P = Peatonal, H = Horizontal, V (al inicio) = Vertical, A = Amarillo, R = Rojo, V (al final) = Verde
-;Cada dirección de memoria apunta a un bloque de un byte de tamaño
+;Cada dirección de memoria apunta a un bloque de 4 bytes de tamaño
 
 SHV			EQU		0x20000000
-SHA			EQU		0x20000001
-SHR			EQU		0x20000002
-SPHV		EQU		0x20000003
-SPHR		EQU		0x20000004
-SVV			EQU		0x20000005
-SVA			EQU		0x20000006
-SVR			EQU		0x20000007
-SPVV		EQU		0x20000008
-SPVR		EQU		0x20000009
+SHA			EQU		0x20000004
+SHR			EQU		0x20000008
+SPHV		EQU		0x2000000C
+SPHR		EQU		0x20000010
+SVV			EQU		0x20000014
+SVA			EQU		0x20000018
+SVR			EQU		0x2000001C
+SPVV		EQU		0x20000020
+SPVR		EQU		0x20000024
 	
 	
 ;Código del programa principal
@@ -42,6 +42,7 @@ __main
 
 		BL		CI    ; Branch de la subrutina CI = Condiciones iniciales
 INF		BL		CRO   ; Branch de la subrutina CRO = Cambio del Reloj Out
+		BL		IRO   ; Branch de la subrutina IRO = IF Reloj Out
 		B 		INF   ; Branch que genera un loop infinito
 
 ;Subrutina que se encarga de establecer los valores iniciales antes del ciclo principal
@@ -94,6 +95,37 @@ CRO		ADD		CONT1,CONT1,#1
 		EORNE	RELOJOUT,FLUJOHORIZONTAL,R11
 		;Fin del ELSE
 		BX		LR
+		
+;Subrutina que se encarga de verificar la condición de reloj out
+
+IRO		CMP		RELOJOUT,#1
+		IT		EQ   ; Se verifica el IF Reloj out == 1
+		BEQ		CDO	 ; Se hace un Salto en caso de que la condición se cumpla al branch CDO = Cambio De Outputs
+		BX		LR   ; Si la condición no se cumple se regresa al ciclo infinito
+		
+;Subrutina que se encarga de cambiar los valores de algunos outputs dependiendo del valor de Flujo Horizontal
+
+CDO     MOV		R6,#0 ; Para esta subrutina R6 representa a la variable interna cont2
+		MOV		AMARILLO,#1
+		MOV		RELOJOUT,#0
+		MOV		R7,#TRUE
+		MOV		R8,#FALSE
+		LDR		R9,=SHV
+		LDR		R10,=SHA
+		LDR		R11,=SVV
+		LDR		R12,=SVA
+		CMP		FLUJOHORIZONTAL,#1
+		ITTE	EQ
+		STREQ	R8,[R9]
+		STREQ	R7,[R10]
+		STRNE	R8,[R11]
+		STRNE	R7,[R12]
+		BL		L2      ;Branch L2 = Loop 2
+		
+;Subrutina que ejecuta el segundo ciclo
+
+L2		BL		INF
+
 
 		
 		END

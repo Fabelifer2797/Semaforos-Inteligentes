@@ -40,29 +40,29 @@ ARM Macro Assembler    Page 1
    19 00000000         ;Notaciones: S = Semaforo, P = Peatonal, H = Horizontal,
                         V (al inicio) = Vertical, A = Amarillo, R = Rojo, V (al
                         final) = Verde
-   20 00000000         ;Cada dirección de memoria apunta a un bloque de un byte
+   20 00000000         ;Cada dirección de memoria apunta a un bloque de 4 bytes
                         de tamaño
    21 00000000         
    22 00000000 20000000 
                        SHV     EQU              0x20000000
-   23 00000000 20000001 
-                       SHA     EQU              0x20000001
-   24 00000000 20000002 
-                       SHR     EQU              0x20000002
-   25 00000000 20000003 
-                       SPHV    EQU              0x20000003
-   26 00000000 20000004 
-                       SPHR    EQU              0x20000004
-   27 00000000 20000005 
-                       SVV     EQU              0x20000005
-   28 00000000 20000006 
-                       SVA     EQU              0x20000006
-   29 00000000 20000007 
-                       SVR     EQU              0x20000007
-   30 00000000 20000008 
-                       SPVV    EQU              0x20000008
-   31 00000000 20000009 
-                       SPVR    EQU              0x20000009
+   23 00000000 20000004 
+                       SHA     EQU              0x20000004
+   24 00000000 20000008 
+                       SHR     EQU              0x20000008
+   25 00000000 2000000C 
+                       SPHV    EQU              0x2000000C
+   26 00000000 20000010 
+                       SPHR    EQU              0x20000010
+   27 00000000 20000014 
+                       SVV     EQU              0x20000014
+   28 00000000 20000018 
+                       SVA     EQU              0x20000018
+   29 00000000 2000001C 
+                       SVR     EQU              0x2000001C
+   30 00000000 20000020 
+                       SPVV    EQU              0x20000020
+   31 00000000 20000024 
+                       SPVR    EQU              0x20000024
 
 
 
@@ -80,101 +80,158 @@ ARM Macro Assembler    Page 2
    40 00000000         
    41 00000000         __main
    42 00000000         
-   43 00000000 F000 F803       BL               CI          ; Branch de la subr
+   43 00000000 F000 F805       BL               CI          ; Branch de la subr
                                                             utina CI = Condicio
                                                             nes iniciales
-   44 00000004 F000 F83A 
+   44 00000004 F000 F83C 
                        INF     BL               CRO         ; Branch de la subr
                                                             utina CRO = Cambio 
                                                             del Reloj Out
-   45 00000008 E7FC            B                INF         ; Branch que genera
+   45 00000008 F000 F850       BL               IRO         ; Branch de la subr
+                                                            utina IRO = IF Relo
+                                                            j Out
+   46 0000000C E7FA            B                INF         ; Branch que genera
                                                              un loop infinito
-   46 0000000A         
-   47 0000000A         ;Subrutina que se encarga de establecer los valores inic
+   47 0000000E         
+   48 0000000E         ;Subrutina que se encarga de establecer los valores inic
                        iales antes del ciclo principal
-   48 0000000A         
-   49 0000000A F04F 0000 
+   49 0000000E         
+   50 0000000E F04F 0000 
                        CI      MOV              H,#FALSE
-   50 0000000E F04F 0100       MOV              V,#FALSE
-   51 00000012 F04F 0200       MOV              CONT1,#FALSE
-   52 00000016 F04F 0300       MOV              RELOJOUT,#FALSE
-   53 0000001A F04F 0400       MOV              AMARILLO,#FALSE
-   54 0000001E F04F 0500       MOV              FLUJOHORIZONTAL,#FALSE
-   55 00000022         
-   56 00000022         ;Se establecen los valores iniciales de los outputs en m
+   51 00000012 F04F 0100       MOV              V,#FALSE
+   52 00000016 F04F 0200       MOV              CONT1,#FALSE
+   53 0000001A F04F 0300       MOV              RELOJOUT,#FALSE
+   54 0000001E F04F 0400       MOV              AMARILLO,#FALSE
+   55 00000022 F04F 0500       MOV              FLUJOHORIZONTAL,#FALSE
+   56 00000026         
+   57 00000026         ;Se establecen los valores iniciales de los outputs en m
                        emoria  
-   57 00000022 F04F 0601       MOV              R6,#TRUE
-   58 00000026 F04F 0700       MOV              R7,#FALSE
-   59 0000002A F04F 5800       LDR              R8,=SHV
-   60 0000002E F8C8 7000       STR              R7,[R8]
-   61 00000032 F8DF 8074       LDR              R8,=SHA
-   62 00000036 F8C8 7000       STR              R7,[R8]
-   63 0000003A F8DF 8070       LDR              R8,=SHR
-   64 0000003E F8C8 6000       STR              R6,[R8]
-   65 00000042 F8DF 806C       LDR              R8,=SPHV
-   66 00000046 F8C8 6000       STR              R6,[R8]
-   67 0000004A F8DF 8068       LDR              R8,=SPHR
-   68 0000004E F8C8 7000       STR              R7,[R8]
-   69 00000052 F8DF 8064       LDR              R8,=SVV
-   70 00000056 F8C8 6000       STR              R6,[R8]
-   71 0000005A F8DF 8060       LDR              R8,=SVA
-   72 0000005E F8C8 7000       STR              R7,[R8]
-   73 00000062 F8DF 805C       LDR              R8,=SVR
-   74 00000066 F8C8 7000       STR              R7,[R8]
-   75 0000006A F8DF 8058       LDR              R8,=SPVV
-   76 0000006E F8C8 7000       STR              R7,[R8]
-   77 00000072 F8DF 8054       LDR              R8,=SPVR
-   78 00000076 F8C8 6000       STR              R6,[R8]
-   79 0000007A 4770            BX               LR          ;Se sale de la subr
-                                                            utina y regresa al 
-                                                            flujo principal
+   58 00000026 F04F 0601       MOV              R6,#TRUE
+   59 0000002A F04F 0700       MOV              R7,#FALSE
+   60 0000002E F04F 5800       LDR              R8,=SHV
+   61 00000032 F8C8 7000       STR              R7,[R8]
+   62 00000036 F8DF 80C0       LDR              R8,=SHA
+   63 0000003A F8C8 7000       STR              R7,[R8]
+   64 0000003E F8DF 80BC       LDR              R8,=SHR
+   65 00000042 F8C8 6000       STR              R6,[R8]
+   66 00000046 F8DF 80B8       LDR              R8,=SPHV
+   67 0000004A F8C8 6000       STR              R6,[R8]
+   68 0000004E F8DF 80B4       LDR              R8,=SPHR
+   69 00000052 F8C8 7000       STR              R7,[R8]
+   70 00000056 F8DF 80B0       LDR              R8,=SVV
+   71 0000005A F8C8 6000       STR              R6,[R8]
+   72 0000005E F8DF 80AC       LDR              R8,=SVA
+   73 00000062 F8C8 7000       STR              R7,[R8]
+   74 00000066 F8DF 80A8       LDR              R8,=SVR
+   75 0000006A F8C8 7000       STR              R7,[R8]
+   76 0000006E F8DF 80A4       LDR              R8,=SPVV
+   77 00000072 F8C8 7000       STR              R7,[R8]
+   78 00000076 F8DF 80A0       LDR              R8,=SPVR
+   79 0000007A F8C8 6000       STR              R6,[R8]
 
 
 
 ARM Macro Assembler    Page 3 
 
 
-   80 0000007C         
-   81 0000007C         ;Subrutina que se encarga de cambiar el valor de la vari
+   80 0000007E 4770            BX               LR          ;Se sale de la subr
+                                                            utina y regresa al 
+                                                            flujo principal
+   81 00000080         
+   82 00000080         ;Subrutina que se encarga de cambiar el valor de la vari
                        able reloj out de acuerdo a la ecuación diseñada
-   82 0000007C         
-   83 0000007C F102 0201 
+   83 00000080         
+   84 00000080 F102 0201 
                        CRO     ADD              CONT1,CONT1,#1
-   84 00000080 2A03            CMP              CONT1,#3    ; Debería comparars
+   85 00000084 2A03            CMP              CONT1,#3    ; Debería comparars
                                                             e con 64000 de acue
                                                             rdo al pseudo códig
                                                             o, pero de momento 
                                                             dejarlo en 3 por la
                                                             s pruebas
-   85 00000082 BF0C            ITE              EQ          ; Se verifica la co
+   86 00000086 BF0C            ITE              EQ          ; Se verifica la co
                                                             ndición del IF
-   86 00000084 2301            MOVEQ            RELOJOUT,#1 ; Se ejecuta el THE
+   87 00000088 2301            MOVEQ            RELOJOUT,#1 ; Se ejecuta el THE
                                                             N
-   87 00000086         ;Comienzo del ELSE
-   88 00000086 F081 0601       EORNE            R6,V,#1     ; NOT del LSB de V 
+   88 0000008A         ;Comienzo del ELSE
+   89 0000008A F081 0601       EORNE            R6,V,#1     ; NOT del LSB de V 
                                                             mediante un XOR
-   89 0000008A BF1F EA06 
+   90 0000008E BF1F EA06 
               0705             ANDNE            R7,R6,FLUJOHORIZONTAL
-   90 00000090 EA00 0806       ANDNE            R8,H,R6
-   91 00000094 EA00 0905       ANDNE            R9,H,FLUJOHORIZONTAL
-   92 00000098 EA47 0A08       ORRNE            R10,R7,R8
-   93 0000009C BF1C EA4A 
+   91 00000094 EA00 0806       ANDNE            R8,H,R6
+   92 00000098 EA00 0905       ANDNE            R9,H,FLUJOHORIZONTAL
+   93 0000009C EA47 0A08       ORRNE            R10,R7,R8
+   94 000000A0 BF1C EA4A 
               0B09             ORRNE            R11,R10,R9
-   94 000000A2 EA85 030B       EORNE            RELOJOUT,FLUJOHORIZONTAL,R11
-   95 000000A6         ;Fin del ELSE
-   96 000000A6 4770            BX               LR
-   97 000000A8         
-   98 000000A8         
-   99 000000A8                 END
-              20000001 
-              20000002 
-              20000003 
-              20000004 
-              20000005 
-              20000006 
-              20000007 
+   95 000000A6 EA85 030B       EORNE            RELOJOUT,FLUJOHORIZONTAL,R11
+   96 000000AA         ;Fin del ELSE
+   97 000000AA 4770            BX               LR
+   98 000000AC         
+   99 000000AC         ;Subrutina que se encarga de verificar la condición de r
+                       eloj out
+  100 000000AC         
+  101 000000AC 2B01    IRO     CMP              RELOJOUT,#1
+  102 000000AE BF08            IT               EQ          ; Se verifica el IF
+                                                             Reloj out == 1
+  103 000000B0 E000            BEQ              CDO         ; Se hace un Salto 
+                                                            en caso de que la c
+                                                            ondición se cumpla 
+                                                            al branch CDO = Cam
+                                                            bio De Outputs
+  104 000000B2 4770            BX               LR          ; Si la condición n
+                                                            o se cumple se regr
+                                                            esa al ciclo infini
+                                                            to
+  105 000000B4         
+  106 000000B4         ;Subrutina que se encarga de cambiar los valores de algu
+                       nos outputs dependiendo del valor de Flujo Horizontal
+  107 000000B4         
+  108 000000B4 F04F 0600 
+                       CDO     MOV              R6,#0       ; Para esta subruti
+                                                            na R6 representa a 
+                                                            la variable interna
+                                                             cont2
+  109 000000B8 F04F 0401       MOV              AMARILLO,#1
+  110 000000BC F04F 0300       MOV              RELOJOUT,#0
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+  111 000000C0 F04F 0701       MOV              R7,#TRUE
+  112 000000C4 F04F 0800       MOV              R8,#FALSE
+  113 000000C8 F04F 5900       LDR              R9,=SHV
+  114 000000CC F8DF A028       LDR              R10,=SHA
+  115 000000D0 F8DF B034       LDR              R11,=SVV
+  116 000000D4 F8DF C034       LDR              R12,=SVA
+  117 000000D8 2D01            CMP              FLUJOHORIZONTAL,#1
+  118 000000DA BF06            ITTE             EQ
+  119 000000DC F8C9 8000       STREQ            R8,[R9]
+  120 000000E0 F8CA 7000       STREQ            R7,[R10]
+  121 000000E4 F8CB 8000       STRNE            R8,[R11]
+  122 000000E8 BF18 F8CC 
+              7000             STRNE            R7,[R12]
+  123 000000EE F000 F800       BL               L2          ;Branch L2 = Loop 2
+                                                            
+  124 000000F2         
+  125 000000F2         ;Subrutina que ejecuta el segundo ciclo
+  126 000000F2         
+  127 000000F2 F7FF FF87 
+                       L2      BL               INF
+  128 000000F6         
+  129 000000F6         
+  130 000000F6         
+  131 000000F6                 END
+              00 00 20000004 
               20000008 
-              20000009 
+              2000000C 
+              20000010 
+              20000014 
+              20000018 
+              2000001C 
+              20000020 
+              20000024 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=.\objects\main.d -o.\objects\main.o -I.\RTE\_Cortex_M3 -IC:\Users\
 User\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include -IC:\Users\User
@@ -188,19 +245,27 @@ ngs\main.lst main.s
 ARM Macro Assembler    Page 1 Alphabetic symbol ordering
 Relocatable symbols
 
-CI 0000000A
+CDO 000000B4
+
+Symbol: CDO
+   Definitions
+      At line 108 in file main.s
+   Uses
+      At line 103 in file main.s
+Comment: CDO used once
+CI 0000000E
 
 Symbol: CI
    Definitions
-      At line 49 in file main.s
+      At line 50 in file main.s
    Uses
       At line 43 in file main.s
 Comment: CI used once
-CRO 0000007C
+CRO 00000080
 
 Symbol: CRO
    Definitions
-      At line 83 in file main.s
+      At line 84 in file main.s
    Uses
       At line 44 in file main.s
 Comment: CRO used once
@@ -210,8 +275,25 @@ Symbol: INF
    Definitions
       At line 44 in file main.s
    Uses
+      At line 46 in file main.s
+      At line 127 in file main.s
+
+IRO 000000AC
+
+Symbol: IRO
+   Definitions
+      At line 101 in file main.s
+   Uses
       At line 45 in file main.s
-Comment: INF used once
+Comment: IRO used once
+L2 000000F2
+
+Symbol: L2
+   Definitions
+      At line 127 in file main.s
+   Uses
+      At line 123 in file main.s
+Comment: L2 used once
 Main 00000000
 
 Symbol: Main
@@ -222,13 +304,19 @@ Symbol: Main
 Comment: Main unused
 __main 00000000
 
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
 Symbol: __main
    Definitions
       At line 41 in file main.s
    Uses
       At line 39 in file main.s
 Comment: __main used once
-5 symbols
+8 symbols
 
 
 
@@ -241,29 +329,31 @@ Symbol: FALSE
    Definitions
       At line 16 in file main.s
    Uses
-      At line 49 in file main.s
       At line 50 in file main.s
       At line 51 in file main.s
       At line 52 in file main.s
       At line 53 in file main.s
       At line 54 in file main.s
-      At line 58 in file main.s
+      At line 55 in file main.s
+      At line 59 in file main.s
+      At line 112 in file main.s
 
-SHA 20000001
+SHA 20000004
 
 Symbol: SHA
    Definitions
       At line 23 in file main.s
    Uses
-      At line 61 in file main.s
-Comment: SHA used once
-SHR 20000002
+      At line 62 in file main.s
+      At line 114 in file main.s
+
+SHR 20000008
 
 Symbol: SHR
    Definitions
       At line 24 in file main.s
    Uses
-      At line 63 in file main.s
+      At line 64 in file main.s
 Comment: SHR used once
 SHV 20000000
 
@@ -271,77 +361,81 @@ Symbol: SHV
    Definitions
       At line 22 in file main.s
    Uses
-      At line 59 in file main.s
-Comment: SHV used once
-SPHR 20000004
+      At line 60 in file main.s
+      At line 113 in file main.s
+
+SPHR 20000010
 
 Symbol: SPHR
    Definitions
       At line 26 in file main.s
    Uses
-      At line 67 in file main.s
+      At line 68 in file main.s
 Comment: SPHR used once
-SPHV 20000003
+SPHV 2000000C
 
 Symbol: SPHV
    Definitions
       At line 25 in file main.s
    Uses
-      At line 65 in file main.s
+      At line 66 in file main.s
 Comment: SPHV used once
-SPVR 20000009
+SPVR 20000024
 
-Symbol: SPVR
-   Definitions
-      At line 31 in file main.s
 
 
 
 ARM Macro Assembler    Page 2 Alphabetic symbol ordering
 Absolute symbols
 
+Symbol: SPVR
+   Definitions
+      At line 31 in file main.s
    Uses
-      At line 77 in file main.s
+      At line 78 in file main.s
 Comment: SPVR used once
-SPVV 20000008
+SPVV 20000020
 
 Symbol: SPVV
    Definitions
       At line 30 in file main.s
    Uses
-      At line 75 in file main.s
+      At line 76 in file main.s
 Comment: SPVV used once
-SVA 20000006
+SVA 20000018
 
 Symbol: SVA
    Definitions
       At line 28 in file main.s
    Uses
-      At line 71 in file main.s
-Comment: SVA used once
-SVR 20000007
+      At line 72 in file main.s
+      At line 116 in file main.s
+
+SVR 2000001C
 
 Symbol: SVR
    Definitions
       At line 29 in file main.s
    Uses
-      At line 73 in file main.s
+      At line 74 in file main.s
 Comment: SVR used once
-SVV 20000005
+SVV 20000014
 
 Symbol: SVV
    Definitions
       At line 27 in file main.s
    Uses
-      At line 69 in file main.s
-Comment: SVV used once
+      At line 70 in file main.s
+      At line 115 in file main.s
+
 TRUE 00000001
 
 Symbol: TRUE
    Definitions
       At line 15 in file main.s
    Uses
-      At line 57 in file main.s
-Comment: TRUE used once
+      At line 58 in file main.s
+      At line 111 in file main.s
+
 12 symbols
-360 symbols in table
+363 symbols in table
